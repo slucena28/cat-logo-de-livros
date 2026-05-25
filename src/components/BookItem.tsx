@@ -1,58 +1,51 @@
-import { useState, FormEvent } from "react";
-import { Book } from "../types/Book";
+// src/components/BookItem.tsx
 
-interface BookFormProps {
-  onAddBook: (book: Book) => void;
+import { Book } from "../App";
+
+interface BookItemProps {
+  book: Book;
+
+  onDelete: (id: string) => Promise<void>;
+
+  onToggleStatus: (
+    book: Book
+  ) => Promise<void>;
 }
 
-export function BookForm({ onAddBook }: BookFormProps) {
-  const [title, setTitle] = useState<string>("");
-  const [author, setAuthor] = useState<string>("");
-  const [status, setStatus] = useState<"Lido" | "Não lido">("Não lido");
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (!title || !author) return;
-
-    onAddBook({
-      title,
-      author,
-      status,
-    });
-
-    setTitle("");
-    setAuthor("");
-    setStatus("Não lido");
-  };
-
+export function BookItem({
+  book,
+  onDelete,
+  onToggleStatus,
+}: BookItemProps) {
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Título"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
+    <li
+      style={{
+        border: "1px solid #ccc",
+        marginBottom: "10px",
+        padding: "10px",
+      }}
+    >
+      <h3>{book.title}</h3>
 
-      <input
-        type="text"
-        placeholder="Autor"
-        value={author}
-        onChange={(e) => setAuthor(e.target.value)}
-      />
+      <p>Autor: {book.author}</p>
 
-      <select
-        value={status}
-        onChange={(e) =>
-          setStatus(e.target.value as "Lido" | "Não lido")
+      <p>Status: {book.status}</p>
+
+      <button
+        onClick={() =>
+          onToggleStatus(book)
         }
       >
-        <option value="Lido">Lido</option>
-        <option value="Não lido">Não lido</option>
-      </select>
+        Alterar Status
+      </button>
 
-      <button type="submit">Adicionar</button>
-    </form>
+      <button
+        onClick={() =>
+          onDelete(book._id!)
+        }
+      >
+        Remover
+      </button>
+    </li>
   );
 }
